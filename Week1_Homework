@@ -50,4 +50,10 @@ Answer : 2: 1282 ; 3: 254
 Question 6. Largest tip
 For the passengers picked up in the Astoria Zone which was the drop off zone that had the largest tip? We want the name of the zone, not the id.
 
-Answer : 
+
+select c."Zone",max(tip_amount) from green_taxi_data a
+LEFT JOIN (select * from taxi_zone_lookup where "Zone"='Astoria') b on a."PULocationID"=b."LocationID"
+LEFT JOIN taxi_zone_lookup c on a."DOLocationID"=c."LocationID"
+ group by c."Zone" order by max(tip_amount) desc; 
+ 
+ Answer : Long Island City/Queens Plaza
