@@ -1,0 +1,55 @@
+/*CREATE EXTERNAL TABLE*/
+
+CREATE OR REPLACE EXTERNAL TABLE FHV.EXTERNAL_FHV2019
+OPTIONS (
+FORMAT= 'CSV',
+uris = ['gs://dtc_data_lake_dtc-de-course-375420/Week3_HW/*']
+);
+
+/*SAMPLE RECORDS*/
+select * from FHV.EXTERNAL_FHV2019 limit 1;
+
+/*CREATE NATIVE TABLE*/
+CREATE OR REPLACE TABLE FHV.FHV2019_NONPARTITIONED AS 
+SELECT * FROM FHV.EXTERNAL_FHV2019;
+
+/*SAMPLE FROM TABLE*/
+select * from FHV.FHV2019_NONPARTITIONED limit 10;
+
+/*Q1*/
+select COUNT(*) from FHV.FHV2019_NONPARTITIONED;
+
+select COUNT(*) from FHV.EXTERNAL_FHV2019;
+
+
+
+/*Q2*/
+select COUNT(distinct affiliated_base_number) from FHV.FHV2019_NONPARTITIONED;
+
+select COUNT(distinct affiliated_base_number) from FHV.EXTERNAL_FHV2019;
+
+/*Q3*/
+select count(*) from  FHV.EXTERNAL_FHV2019 where
+PUlocationID is null and DOlocationID is null;
+
+select count(*) from  FHV.FHV2019_NONPARTITIONED where
+PUlocationID is null and DOlocationID is null;
+
+
+/*Q4*/
+CREATE OR REPLACE TABLE FHV.FHV2019_PARTITIONED_CLUSTERED 
+PARTITION BY DATE(pickup_datetime)
+CLUSTER BY Affiliated_base_number
+AS
+SELECT * FROM FHV.EXTERNAL_FHV2019;
+
+
+/*Q5*/
+SELECT DISTINCT Affiliated_base_number FROM
+FHV.FHV2019_NONPARTITIONED where
+DATE(pickup_datetime) BETWEEN '2019-03-01' AND '2019-03-31';
+
+
+SELECT DISTINCT Affiliated_base_number FROM
+FHV.FHV2019_PARTITIONED_CLUSTERED where
+DATE(pickup_datetime) BETWEEN '2019-03-01' AND '2019-03-31';
