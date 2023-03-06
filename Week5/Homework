@@ -1,0 +1,12 @@
+Question 1
+Answer: '3.3.2'
+
+
+import pyspark
+from pyspark.sql import *
+spark = SparkSession.builder \
+    .master("local[*]") \
+    .appName('test') \
+    .getOrCreate()
+
+spark.version
